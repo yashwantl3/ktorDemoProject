@@ -1,11 +1,11 @@
 package com.example.repo
 
+import com.example.mapper.TransactionMapper
 import com.example.models.TransactionTable
 import com.example.models.UserTable
 import com.example.models.dao.Transaction
 import entities.Amount
 import entities.User
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.ResultRow
@@ -17,8 +17,8 @@ import org.jetbrains.exposed.sql.statements.InsertStatement
 
 class TransactionImp: Transaction {
     override suspend fun insert(
-        txnId: Int,
-        users: List<User>,
+        txnId: String,
+        users: List<User?>,
         payee: User,
         amt: Amount,
         description: String?,
@@ -44,16 +44,16 @@ class TransactionImp: Transaction {
     override suspend fun getAllTxn(): List<entities.Transaction>? =
         DatabaseFactory.dbQuery {
             TransactionTable.selectAll().mapNotNull {
-                rowToTxn(it)
+                TransactionMapper(it)
             }
         }
 
 
-    override suspend fun getTxnById(txnId: Int): entities.Transaction? =
+    override suspend fun getTxnById(txnId: String): entities.Transaction? =
         DatabaseFactory.dbQuery {
             TransactionTable.select(TransactionTable.txnId.eq(txnId))
                 .map{
-                    rowToTxn(it)
+                    TransactionMapper(it)
                 }.singleOrNull()
         }
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class Transaction(
-    val txnId: Int,
+    val txnId: String,
     val users: List<User>,
     val payee: User,
     val amt: Amount,
