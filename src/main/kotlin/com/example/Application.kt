@@ -1,10 +1,12 @@
 package com.example
 
 import com.example.models.dao.Transaction
+import com.example.models.dao.UserGroup
 import com.example.models.dao.UserInterface
 import com.example.plugins.*
 import com.example.repo.DatabaseFactory
 import com.example.repo.TransactionImp
+import com.example.repo.UserGroupImp
 import com.example.repo.UserRepo
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -22,8 +24,9 @@ fun main() {
 //        contactUsModule()
         val dao : UserInterface = UserRepo()
         val txnDao: Transaction = TransactionImp()
+        val grpDao: UserGroup = UserGroupImp()
         DatabaseFactory.init()
-        splitWiseRouting(dao,txnDao)
+        splitWiseRouting(dao,txnDao,grpDao)
     }.start(wait = true)
 }
 

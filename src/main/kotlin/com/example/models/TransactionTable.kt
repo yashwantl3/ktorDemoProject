@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
 object TransactionTable:Table() {
-    val txnId: Column<Int> = integer("txnId").autoIncrement()
+    val txnId: Column<String> = varchar("txnId",512)
     val payeeId: Column<Int> = integer("payee_Id",)
     val payeeName: Column<String> = varchar("payee_name", 512)
     val payeeBalance: Column<Double> = double("payee_balance",)

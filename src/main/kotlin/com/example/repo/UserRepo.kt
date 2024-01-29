@@ -1,5 +1,6 @@
 package com.example.repo
 
+import com.example.mapper.UserMapper
 import com.example.models.UserTable
 import com.example.models.dao.UserInterface
 import entities.User
@@ -16,13 +17,13 @@ class UserRepo: UserInterface {
                 user[UserTable.balance] = balance
             }
         }
-        return rowToUser(statement?.resultedValues?.get(0))
+        return statement?.resultedValues?.get(0)?.let { UserMapper(it) }
     }
 
     override suspend fun getAllUsers(): List<User>? =
         DatabaseFactory.dbQuery {
             UserTable.  selectAll().mapNotNull {
-                rowToUser(it)
+                UserMapper(it)
             }
         }
 
@@ -31,7 +32,7 @@ class UserRepo: UserInterface {
         DatabaseFactory.dbQuery {
             UserTable.select { UserTable.userId.eq(userId) }
                 .map {
-                    rowToUser(it)
+                    UserMapper(it)
                 }.singleOrNull()
         }
 
@@ -46,15 +47,4 @@ class UserRepo: UserInterface {
                 user[UserTable.balance] = balance
             }
         }
-
-
-    private fun rowToUser(row: ResultRow?): User? {
-        if (row == null)
-            return null
-        return User(
-            name = row[UserTable.name],
-            balance = row[UserTable.balance],
-            userId = row[UserTable.userId]
-        )
-    }
 }

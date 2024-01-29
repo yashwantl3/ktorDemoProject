@@ -1,5 +1,7 @@
 package com.example.repo
 
+import com.example.models.DebtsTable
+import com.example.models.GroupTable
 import com.example.models.TransactionTable
 import com.example.models.UserTable
 import com.zaxxer.hikari.HikariConfig
@@ -16,6 +18,8 @@ object DatabaseFactory {
         transaction {
             SchemaUtils.create(UserTable)
             SchemaUtils.create(TransactionTable)
+            SchemaUtils.create(GroupTable)
+            SchemaUtils.create(DebtsTable)
         }
     }
 
