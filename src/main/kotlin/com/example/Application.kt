@@ -1,13 +1,13 @@
 package com.example
 
+import com.example.di.DaggerSplitWiseDataComponent
+import com.example.di.SplitWiseModule
+import com.example.models.dao.Debts
 import com.example.models.dao.Transaction
 import com.example.models.dao.UserGroup
 import com.example.models.dao.UserInterface
-import com.example.plugins.*
+import com.example.plugins.splitWiseRouting
 import com.example.repo.DatabaseFactory
-import com.example.repo.TransactionImp
-import com.example.repo.UserGroupImp
-import com.example.repo.UserRepo
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -22,11 +22,21 @@ fun main() {
         }
 //        configureRouting()
 //        contactUsModule()
-        val dao : UserInterface = UserRepo()
-        val txnDao: Transaction = TransactionImp()
-        val grpDao: UserGroup = UserGroupImp()
+
+
+        val application: Application = this
+        val component = DaggerSplitWiseDataComponent.builder()
+            .splitWiseModule(SplitWiseModule(application))
+            .build()
+        component.inject(this)
+
+        val dao: UserInterface = component.provideUserDao()
+        val txnDao: Transaction = component.provideTransactionDao()
+        val grpDao: UserGroup = component.provideGroupDao()
+        val debtsDao: Debts = component.provideDebtsDao()
+
         DatabaseFactory.init()
-        splitWiseRouting(dao,txnDao,grpDao)
+        splitWiseRouting(dao, txnDao, grpDao, debtsDao)
     }.start(wait = true)
 }
 

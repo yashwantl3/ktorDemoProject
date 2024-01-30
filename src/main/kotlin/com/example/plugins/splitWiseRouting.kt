@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.models.dao.Debts
 import com.example.models.dao.UserInterface
 import com.example.repo.DebtsImp
 import entities.Amount
@@ -14,7 +15,7 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 fun Application.splitWiseRouting(dao: UserInterface, txnDao: com.example.models.dao.Transaction,
-                                 grpDao: com.example.models.dao.UserGroup){
+                                 grpDao: com.example.models.dao.UserGroup, debtsDao: Debts){
     routing {
         get("/") {
             call.respond("Welcome to Splitwise")
@@ -98,7 +99,7 @@ fun Application.splitWiseRouting(dao: UserInterface, txnDao: com.example.models.
                             val checkExistingDebt=DebtsImp().check(user.userId, payee)
                             println("Result after checking: $checkExistingDebt")
                             if(!checkExistingDebt){
-                                DebtsImp().insert(
+                                debtsDao.insert(
                                     debtId = UUID.randomUUID().toString(),
                                     userId = user.userId,
                                     amount = if (user.userId == payee) 0.0 else -split,
@@ -107,7 +108,7 @@ fun Application.splitWiseRouting(dao: UserInterface, txnDao: com.example.models.
                                 )
                             }
                             else{
-                                DebtsImp().update(user.userId, payee, if (user.userId == payee) 0.0 else -split)
+                                debtsDao.update(user.userId, payee, if (user.userId == payee) 0.0 else -split)
                             }
                         }
                     }
