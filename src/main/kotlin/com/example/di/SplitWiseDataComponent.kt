@@ -8,6 +8,7 @@ import dagger.Component
 import io.ktor.server.application.*
 import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [SplitWiseModule::class])
 interface SplitWiseDataComponent {
     fun inject(application: Application)
